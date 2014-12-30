@@ -1,0 +1,17 @@
+{
+  "uuid": "2ff736b2-2be5-4e37-8613-bb3c11d75c44",
+  "shortName": "ToothTimer",
+  "longName": "ToothTimer",
+  "companyName": "Michael Vezie",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}

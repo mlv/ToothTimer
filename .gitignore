@@ -27,3 +27,10 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Other files that show up from time to time
+*~
+
+# Pebble build directory
+build
+.lock*build
