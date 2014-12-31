@@ -69,6 +69,7 @@ struct {
 };
 
 const int msgs_size = sizeof(msgs)/sizeof(msgs[0]);
+AppTimer *tooth_timer = NULL;
 
 static void 
 timer_callback(void *data)
@@ -86,7 +87,7 @@ timer_callback(void *data)
 		return;
 	}
 
-	app_timer_register(1000 /* milliseconds */, timer_callback, NULL);
+	tooth_timer = app_timer_register(1000 /* milliseconds */, timer_callback, NULL);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "timer_callback nextstep:%d, nextstep_countdown:%d", nextstep, nextstep_countdown);
 	if (nextstep_countdown <= 0)
 	{
@@ -114,6 +115,11 @@ select_click_handler(ClickRecognizerRef recognizer, void *context)
 {
 	nextstep=0;
 	nextstep_countdown = 0;
+	if (tooth_timer != NULL)
+	{
+		app_timer_cancel(tooth_timer);
+		tooth_timer = NULL;
+	}
 	timer_callback(NULL);
 }
 
