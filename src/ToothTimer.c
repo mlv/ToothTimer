@@ -155,7 +155,8 @@ window_load(Window *window)
 	layer_add_child(window_layer, text_layer_get_layer(countdown_layer));
 	
 	s_nextstep_layer[0] = 0;
-	nextstep_layer = text_layer_create((GRect) { .origin = { 0, 90 }, .size = { bounds.size.w, 48 } });
+  // nextstep is two lines (first is "Next:"), so needs to be taller than step
+	nextstep_layer = text_layer_create((GRect) { .origin = { 0, 90 }, .size = { bounds.size.w, 54 } });
 	text_layer_set_text(nextstep_layer, s_nextstep_layer);
 	text_layer_set_font(nextstep_layer, fonts_get_system_font(TEXT_FONT));
 	//text_layer_set_text_alignment(nextstep_layer, GTextAlignmentCenter);
