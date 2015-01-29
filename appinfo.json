@@ -14,7 +14,7 @@
     "shortName": "ToothTimer",
     "uuid": "2ff736b2-2be5-4e37-8613-bb3c11d75c44",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": false
     }

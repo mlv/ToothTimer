@@ -71,6 +71,12 @@ struct {
 const int msgs_size = sizeof(msgs)/sizeof(msgs[0]);
 AppTimer *tooth_timer = NULL;
 
+static void
+exit_callback(void *data)
+{
+  window_stack_pop_all(false);  
+}
+
 static void 
 timer_callback(void *data)
 {
@@ -84,6 +90,7 @@ timer_callback(void *data)
 		layer_mark_dirty(text_layer_get_layer(nextstep_layer));
 		layer_mark_dirty(text_layer_get_layer(countdown_layer));
 		vibes_enqueue_custom_pattern(threeshort_pattern);
+    tooth_timer = app_timer_register(5*60*1000 /* 5 minutes */, exit_callback, NULL);
 		return;
 	}
 
