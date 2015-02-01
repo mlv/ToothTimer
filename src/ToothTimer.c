@@ -98,6 +98,7 @@ timer_callback(void *data)
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "timer_callback nextstep:%d, nextstep_countdown:%d", nextstep, nextstep_countdown);
 	if (nextstep_countdown <= 0)
 	{
+    light_enable_interaction();
 		nextstep_countdown = msgs[nextstep].time;
 		if (msgs[nextstep].vibe)
 			vibes_enqueue_custom_pattern(*msgs[nextstep].vibe);
