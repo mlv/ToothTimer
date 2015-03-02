@@ -33,22 +33,6 @@ struct {
 	int time; // in seconds
 	char *text;
 	VibePattern *vibe;
-#if 0
-} msgs[13] = {
-	{ 10, "Upper left inner" },
-	{ 10, "Upper left top" },
-	{ 10, "Upper left outer" },
-	{ 10, "Upper right inner" },
-	{ 10, "Upper right top" },
-	{ 10, "Upper right outer" },
-	{  3, "Spit" },
-	{ 10, "Lower left inner" },
-	{ 10, "Lower left top" },
-	{ 10, "Lower left outer" },
-	{ 10, "Lower right inner" },
-	{ 10, "Lower right top" },
-	{ 10, "Lower right outer" },
-#else //0
 } msgs[10] = {
 	{  3, "Get ready", NULL },
 
@@ -65,7 +49,6 @@ struct {
 
 	{ 15, "Upper left inner", &oneshort_pattern },
 	{ 15, "Upper right inner", &oneshort_pattern },
-#endif
 };
 
 const int msgs_size = sizeof(msgs)/sizeof(msgs[0]);
@@ -98,7 +81,6 @@ timer_callback(void *data)
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "timer_callback nextstep:%d, nextstep_countdown:%d", nextstep, nextstep_countdown);
 	if (nextstep_countdown <= 0)
 	{
-    light_enable_interaction();
 		nextstep_countdown = msgs[nextstep].time;
 		if (msgs[nextstep].vibe)
 			vibes_enqueue_custom_pattern(*msgs[nextstep].vibe);
@@ -111,6 +93,8 @@ timer_callback(void *data)
 		layer_mark_dirty(text_layer_get_layer(step_layer));
 		layer_mark_dirty(text_layer_get_layer(nextstep_layer));
 	}
+  if (nextstep_countdown == 1)
+    light_enable_interaction();
 	snprintf(s_countdown_layer, sizeof(s_countdown_layer), "%d", nextstep_countdown);
 	layer_mark_dirty(text_layer_get_layer(countdown_layer));
 	nextstep_countdown --;
