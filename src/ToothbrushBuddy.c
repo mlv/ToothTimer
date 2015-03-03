@@ -19,13 +19,8 @@ static VibePattern oneshort_pattern = {
   .num_segments = 1
 };
 
-static VibePattern twoshort_pattern = {
-  .durations = (uint32_t []) {100, 200, 100},
-  .num_segments = 3
-};
-
 static VibePattern threeshort_pattern = {
-  .durations = (uint32_t []) {100, 200, 100, 200, 100},
+  .durations = (uint32_t []) {100, 200, 100, 200, 300},
   .num_segments = 5
 };
 
@@ -33,22 +28,61 @@ struct {
 	int time; // in seconds
 	char *text;
 	VibePattern *vibe;
-} msgs[10] = {
-	{  3, "Get ready", NULL },
+#if 0
+} msgs[18] = {
+	{ 10, "Upper left inner" },
+	{ 10, "Upper left bottom" },
+	{ 10, "Upper left outer" },
+	{ 10, "Upper right inner" },
+	{ 10, "Upper right bottom" },
+	{ 10, "Upper right outer" },
+	{ 10, "Lower left inner" },
+	{ 10, "Lower left top" },
+	{ 10, "Lower left outer" },
+	{ 10, "Lower right inner" },
+	{ 10, "Lower right top" },
+	{ 10, "Lower right outer" },
+	{ 10, “Lower middle inner” },
+	{ 10, “Lower middle outer” },
+	{ 10, “Upper middle inner” },
+	{ 10, “Upper middle outer” },
+	{ 10, “Tongue” },
+	{ 10, "Cheeks" },
+	{ 10, “Top gums” },
+	{ 10, "Bottom gums"}
 
-	{ 15, "Lower right outer", &twoshort_pattern },
-	{ 15, "Lower left outer", &oneshort_pattern },
+#else //0
+} msgs[21] = {
+	{  3, "Get ready", &oneshort_pattern},
 
-	{ 15, "Lower left inner", &oneshort_pattern },
-	{ 15, "Lower right inner", &oneshort_pattern },
+	{ 10, "Lower right outer", &oneshort_pattern },
+	{ 10, "Lower right top", &oneshort_pattern },
+	{ 10, "Lower right inner", &oneshort_pattern },
+		
+	{ 10, "Lower middle outer", &oneshort_pattern },
+	{ 10, "Lower middle inner", &oneshort_pattern },
 
-	{  3, "Spit", &twoshort_pattern },
+	{ 10, "Lower left outer", &oneshort_pattern },
+	{ 10, "Lower left top", &oneshort_pattern },
+	{ 10, "Lower left inner", &oneshort_pattern },
 
-	{ 15, "Upper right outer", &twoshort_pattern },
-	{ 15, "Upper left outer", &oneshort_pattern },
+	{ 10, "Upper right outer", &oneshort_pattern },
+	{ 10, "Upper right bottom", &oneshort_pattern },
+	{ 10, "Upper right inner", &oneshort_pattern },
+		
+	{ 10, "Upper middle outer", &oneshort_pattern },
+	{ 10, "Upper middle inner", &oneshort_pattern },
 
-	{ 15, "Upper left inner", &oneshort_pattern },
-	{ 15, "Upper right inner", &oneshort_pattern },
+	{ 10, "Upper left outer", &oneshort_pattern },
+	{ 10, "Upper left bottom", &oneshort_pattern },
+	{ 10, "Upper left inner", &oneshort_pattern },
+
+	{ 5, "Tongue", &oneshort_pattern },
+	{ 5, "Cheeks", &oneshort_pattern },
+	{ 5, "Top gums", &oneshort_pattern },
+	{ 5, "Bottom gums", &oneshort_pattern },
+
+#endif
 };
 
 const int msgs_size = sizeof(msgs)/sizeof(msgs[0]);
@@ -63,24 +97,24 @@ exit_callback(void *data)
 static void 
 timer_callback(void *data)
 {
-	
 	if (nextstep > msgs_size-1)
 	{
 		s_step_layer[0] = 0;
 		s_nextstep_layer[0] = 0;
-		snprintf(s_countdown_layer, sizeof(s_countdown_layer), "Done!");
+		snprintf(s_countdown_layer, sizeof(s_countdown_layer), "DONE!");
 		layer_mark_dirty(text_layer_get_layer(step_layer));
 		layer_mark_dirty(text_layer_get_layer(nextstep_layer));
 		layer_mark_dirty(text_layer_get_layer(countdown_layer));
 		vibes_enqueue_custom_pattern(threeshort_pattern);
-    tooth_timer = app_timer_register(5*60*1000 /* 5 minutes */, exit_callback, NULL);
+    tooth_timer = app_timer_register(1*60*1000 /* 1 minute */, exit_callback, NULL);
 		return;
 	}
 
-	tooth_timer = app_timer_register(1000 /* milliseconds */, timer_callback, NULL);
+	tooth_timer = app_timer_register(1000 /* 1 second */, timer_callback, NULL);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "timer_callback nextstep:%d, nextstep_countdown:%d", nextstep, nextstep_countdown);
 	if (nextstep_countdown <= 0)
 	{
+    light_enable_interaction();
 		nextstep_countdown = msgs[nextstep].time;
 		if (msgs[nextstep].vibe)
 			vibes_enqueue_custom_pattern(*msgs[nextstep].vibe);
@@ -89,11 +123,11 @@ timer_callback(void *data)
 		if (nextstep < msgs_size-1)
 			snprintf(s_nextstep_layer, sizeof(s_nextstep_layer), "Next:\n%s", msgs[nextstep+1].text);
 		else
-			snprintf(s_nextstep_layer, sizeof(s_nextstep_layer), "Next:\nDone!");
+			snprintf(s_nextstep_layer, sizeof(s_nextstep_layer), "Next:\nSpit and Gargle!");
 		layer_mark_dirty(text_layer_get_layer(step_layer));
 		layer_mark_dirty(text_layer_get_layer(nextstep_layer));
 	}
-  if (nextstep_countdown == 1)
+	  if (nextstep_countdown == 1)
     light_enable_interaction();
 	snprintf(s_countdown_layer, sizeof(s_countdown_layer), "%d", nextstep_countdown);
 	layer_mark_dirty(text_layer_get_layer(countdown_layer));
@@ -139,7 +173,7 @@ window_load(Window *window)
 	// text_layer_set_text_alignment(step_layer, GTextAlignmentCenter);
 	layer_add_child(window_layer, text_layer_get_layer(step_layer));
 	
-	strcpy(s_countdown_layer, "Start");
+	strcpy(s_countdown_layer, "START");
 	countdown_layer = text_layer_create((GRect) { .origin = { 0, 48 }, .size = { bounds.size.w, 42 } });
 	text_layer_set_text(countdown_layer, s_countdown_layer);
 	text_layer_set_font(countdown_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
