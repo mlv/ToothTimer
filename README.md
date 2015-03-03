@@ -1,4 +1,4 @@
-Toothbrush Buddy (fork of @mlv's ToothTimer)
+ToothTimer
 ==========
 
 Pebble app for timing the brushing of teeth (3 minutes).
